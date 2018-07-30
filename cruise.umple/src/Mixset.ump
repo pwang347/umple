@@ -6,8 +6,8 @@ class UmpleModel {
      
      
   //This to add require statement depdendencies to the Umple model 
-  // 
-    0..1--* RequireStatementGraph requireStatementGraph;
+   
+    0..1 -- * RequireStatementGraph requireStatementGraph;
   
 }
 
@@ -125,7 +125,7 @@ class RequireLeafNode
 {
   isA RequireStatementGraph;
   after constructor{ setNodeName("leafNode");}
-  1--* MixsetOrFile mixsetOrFile;
+  0..1 -- * MixsetOrFile mixsetOrFile;
 }
 
 class ReferencedGraph
