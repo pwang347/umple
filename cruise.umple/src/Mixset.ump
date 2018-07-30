@@ -3,6 +3,12 @@ class UmpleModel {
   // This mixin adds the complete set of Mixsets and files to the
   // model.
      0..1 -- * MixsetOrFile;
+     
+     
+  //This to add require statement depdendencies to the Umple model 
+  // 
+    0..1--* RequireStatementGraph requireStatementGraph;
+  
 }
 
 // A MixsetOrFile is an umple entity that is subject to require logic
@@ -78,4 +84,56 @@ class MixsetFragment {
   // if class X { mixset Y {...}} then wrapped in class X { }
   // if class X { mixset Y a; then just there are no curly brackets, and a is wrapped in class X {}
   body;
+}
+
+// A requireStatementGraph can represents requirement statment constraints that specify which mixsets 
+// or files should be included or excluded in/from Umple model. Feature Diagram can be constructed from 
+// these requireStatementGraphes.
+// ReferencedGraph is used to join graphes to its parent accourding to the linking operator.  
+// For example, if file has (use A and B;) and another file has (use C or D;). This will take the form of: 
+// (A and B) and (C or D).
+
+class RequireStatementGraph
+{
+  nodeName ="rootNode";
+  int min =0;
+  int max =0;
+  0..1   -- *  RequireStatementGraph requiredGraph ;
+  0..1   -- *  ReferencedGraph referencedGraph ;
+  
+ }
+
+class ConjunctiveGraph
+{
+  isA RequireStatementGraph;
+  after constructor{ setNodeName("conjunction");} 
+}
+
+class DisjunctiveGraph
+{
+  isA RequireStatementGraph;
+  after constructor{ setNodeName("disjunction");}
+}
+
+class NegatedGraph
+{
+  isA RequireStatementGraph;
+  after constructor{ setNodeName("negation");} 
+}
+
+class RequireLeafNode
+{
+  isA RequireStatementGraph;
+  after constructor{ setNodeName("leafNode");}
+  1--* MixsetOrFile mixsetOrFile;
+}
+
+class ReferencedGraph
+{  
+  linkingOperator;
+  //boolean negation ;
+  //boolean conjunction;
+  //boolean disjunction;
+  RequireStatementGraph graph;
+  
 }
