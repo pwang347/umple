@@ -256,6 +256,7 @@ class UmpleInternalParser
   private void analyzeToken(Token t, int analysisStep)
   {
     analyzeMixsetUseStatement(t, analysisStep);
+    analyzeRequireStatement(t, analysisStep);
     analyzeUSE(t, analysisStep);
     analyzeCoreToken(t,analysisStep);
     analyzeEnumerationToken(t, analysisStep);
@@ -519,3 +520,4 @@ use UmpleInternalParser_CodeFilter.ump;
 use UmpleInternalParser_CodeParserHandlers.ump;
 use UmpleInternalParser_CodeEnumeration.ump;
 use UmpleInternalParser_CodeMixset.ump;
+use UmpleInternalParser_CodeRequireStatement.ump;

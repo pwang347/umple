@@ -1,0 +1,100 @@
+/*
+Copyright: All contributers to the Umple Project.
+
+This file is made available subject to the open source license found at:
+http://umple.org/license
+
+This file analyzses require statement tokens to populate Requiregraph for Umple model.
+
+Please refer to UmpleInternalParser.ump for more details.
+*/
+
+class UmpleInternalParser
+{
+  depend cruise.umple.compiler.*;
+  
+   public static RequireLinkingNode createLinkingNode(Token token)
+  {
+    if(token.getSubToken("and") != null)
+    return new ConjunctiveNode();
+    if(token.getSubToken("or") != null)
+    return new DisjunctiveNode();
+    if(token.getSubToken("not") != null)
+    return new NegatedNode();
+    if(token.getSubToken("opt") != null )
+    {
+      ConjunctiveNode conjNode = new ConjunctiveNode();
+      conjNode.setIsMultiplicity(true);
+      conjNode.setMax(1);
+      conjNode.setMin(0);
+      return conjNode;
+    }
+    if(token.getSubToken("lowerBound") != null)
+    {
+      ConjunctiveNode conjNode = new ConjunctiveNode();
+      conjNode.setIsMultiplicity(true);
+      conjNode.setMax(Integer.parseInt(token.getSubToken("upperBound").getValue()));
+      conjNode.setMin(Integer.parseInt(token.getSubToken("lowerBound").getValue()));
+      return conjNode;
+    }
+    
+    return null;  
+  }
+  
+  
+  public void analyzeRequireStatement(Token t, int analysisStep)
+  {
+    if ( analysisStep != 2)
+    return;
+    
+    if (t.is("requireStatement"))
+    {
+    RequireStatementGraph graph = new RequireStatementGraph();
+    String mixsetName="";
+ 
+    RequireLinkingNode requireLinkingNode = null;
+    RequireLeafNode leafNode  = null;    
+      for(Token token : t.getSubTokens())
+      {
+        if(token.is("requireTerminal"))
+        {
+          
+          mixsetName = token.getSubToken("targetMixsetName").getValue();
+          Mixset mixset = model.getMixset(mixsetName);
+          if(mixset == null)
+          return;
+          //otherwise
+          leafNode = new RequireLeafNode();
+          leafNode.addMixsetOrFile(mixset);
+          
+          if(requireLinkingNode != null)
+          {
+            requireLinkingNode.addRequiredGraph(leafNode);
+            leafNode = null;
+          }
+        }
+        else if (token.is("requireLinkingOp"))
+        {          
+          RequireLinkingNode newRequireLinkingNode = createLinkingNode(token);
+          if(! newRequireLinkingNode.equals(requireLinkingNode))       
+           {
+           requireLinkingNode.addReferencedGraph(new ReferencedGraph (requireLinkingNode.getNodeName(),newRequireLinkingNode));
+           requireLinkingNode = newRequireLinkingNode;
+           }
+         
+          if(leafNode != null)
+          {
+            requireLinkingNode.addRequiredGraph(leafNode);
+            leafNode = null;
+          }
+          
+        }                
+ 
+      }
+    
+    }
+  
+  
+  }
+
+}

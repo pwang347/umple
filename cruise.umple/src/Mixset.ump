@@ -96,28 +96,50 @@ class MixsetFragment {
 class RequireStatementGraph
 {
   nodeName ="rootNode";
-  int min =0;
-  int max =0;
-  0..1   -- *  RequireStatementGraph requiredGraph ;
-  0..1   -- *  ReferencedGraph referencedGraph ;
-  
+
+  0..1   -- *  RequireStatementGraph requiredGraph ; // go down (vertical)
+  0..1   -- *  ReferencedGraph referencedGraph ; // go horizontal  
  }
 
-class ConjunctiveGraph
+class RequireLinkingNode
 {
+ 
   isA RequireStatementGraph;
+  after constructor{ setNodeName("RequireLinkingNode");} 
+  
+  @Override
+  public boolean equals(Object o) {
+    if (this == o)
+      return true;
+    if (o == null)
+      return false;
+    if (getClass() != o.getClass())
+      return false;
+    RequireLinkingNode linkingNode = (RequireLinkingNode) o;
+    return this.getNodeName().equals(linkingNode.getNodeName());
+}
+  
+  
+  
+}
+class ConjunctiveNode
+{
+  int min = 0;
+  int max = 0;
+  boolean isMultiplicity =false;
+  isA RequireLinkingNode;
   after constructor{ setNodeName("conjunction");} 
 }
 
-class DisjunctiveGraph
+class DisjunctiveNode
 {
-  isA RequireStatementGraph;
+  isA RequireLinkingNode;
   after constructor{ setNodeName("disjunction");}
 }
 
-class NegatedGraph
+class NegatedNode
 {
-  isA RequireStatementGraph;
+  isA RequireLinkingNode;
   after constructor{ setNodeName("negation");} 
 }
 

@@ -26,7 +26,7 @@ requireMultiplicityList- : (, [[requireTerminal]])*
 
 requireLinkingOp : ([[requireLinkingOptNot]] | [=and:&|&&|and|,] | [!or:([|][|]?|or|;)])
 
-requireLinkingOptNot : (opt | not) 
+requireLinkingOptNot : ([=opt:opt] | [=not:not]) 
 
 requireTerminal :  [~targetMixsetName]
 
